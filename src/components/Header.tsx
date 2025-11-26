@@ -9,10 +9,11 @@ const Header = () => {
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Cars", href: "#cars" },
-    { name: "Tickets", href: "#tickets" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "Cars", href: "/#cars" },
+    { name: "Tickets", href: "/#tickets" },
+    { name: "Services", href: "/services" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
@@ -32,23 +33,13 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              item.href.startsWith("#") ? (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-                >
-                  {item.name}
-                </Link>
-              )
+              <Link
+                key={item.name}
+                to={item.href}
+                className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+              >
+                {item.name}
+              </Link>
             ))}
           </nav>
 
@@ -59,9 +50,11 @@ const Header = () => {
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </Link>
-            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow">
-              Contact Us
-            </Button>
+            <Link to="/contact">
+              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow">
+                Contact Us
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -78,29 +71,20 @@ const Header = () => {
           <div className="md:hidden py-4 animate-fade-in-up">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                item.href.startsWith("#") ? (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </a>
-                ) : (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                )
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
               ))}
-              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold w-full">
-                Contact Us
-              </Button>
+              <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold w-full">
+                  Contact Us
+                </Button>
+              </Link>
             </nav>
           </div>
         )}
