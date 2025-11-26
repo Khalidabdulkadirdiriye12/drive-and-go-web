@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Car, Ticket } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroCar from "@/assets/hero-car.jpg";
 import heroTicketing from "@/assets/hero-ticketing.jpg";
 
@@ -30,7 +31,7 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#cars">
+              <Link to="/cars">
                 <Button 
                   size="lg"
                   className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow group w-full sm:w-auto"
@@ -38,8 +39,8 @@ const Hero = () => {
                   Browse Cars
                   <Car className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </a>
-              <a href="#tickets">
+              </Link>
+              <Link to="/tickets">
                 <Button 
                   size="lg"
                   variant="outline"
@@ -48,7 +49,7 @@ const Hero = () => {
                   Book Ticket
                   <Ticket className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </a>
+              </Link>
             </div>
 
             {/* Stats */}
