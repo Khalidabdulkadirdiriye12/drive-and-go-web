@@ -25,7 +25,7 @@ const benefits = [
 
 const WhyChooseUs = () => {
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <section id="about" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">

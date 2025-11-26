@@ -6,10 +6,7 @@ import heroTicketing from "@/assets/hero-ticketing.jpg";
 
 const Hero = () => {
   return (
-    <section id="home" className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 -z-10" />
-      
+    <section id="home" className="relative pt-32 pb-20 overflow-hidden bg-background">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
