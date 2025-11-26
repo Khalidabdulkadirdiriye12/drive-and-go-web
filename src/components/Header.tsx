@@ -1,15 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "@/assets/doogsan-logo.jpg";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Home", href: "#home" },
+    { name: "Home", href: "/" },
     { name: "Cars", href: "#cars" },
+    { name: "Tickets", href: "#tickets" },
     { name: "Services", href: "#services" },
-    { name: "About", href: "#about" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -18,29 +20,47 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              AutoTicket
-            </h1>
-          </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img src={logo} alt="Doogsan Enterprise" className="h-12 w-12 object-contain rounded-lg" />
+            <div className="hidden sm:block">
+              <h1 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
+                Doogsan Enterprise
+              </h1>
+            </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-              >
-                {item.name}
-              </a>
+              item.href.startsWith("#") ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </nav>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-4">
+            <Link to="/checkout">
+              <Button variant="outline" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+            </Link>
             <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow">
-              Get Started
+              Contact Us
             </Button>
           </div>
 
@@ -58,17 +78,28 @@ const Header = () => {
           <div className="md:hidden py-4 animate-fade-in-up">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
+                item.href.startsWith("#") ? (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold w-full">
-                Get Started
+                Contact Us
               </Button>
             </nav>
           </div>
