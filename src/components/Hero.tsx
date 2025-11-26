@@ -30,21 +30,25 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow group"
-              >
-                Browse Cars
-                <Car className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="border-2 border-primary hover:bg-primary hover:text-primary-foreground group"
-              >
-                Book Ticket
-                <Ticket className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <a href="#cars">
+                <Button 
+                  size="lg"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow group w-full sm:w-auto"
+                >
+                  Browse Cars
+                  <Car className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </a>
+              <a href="#tickets">
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-primary hover:bg-primary hover:text-primary-foreground group w-full sm:w-auto"
+                >
+                  Book Ticket
+                  <Ticket className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </a>
             </div>
 
             {/* Stats */}

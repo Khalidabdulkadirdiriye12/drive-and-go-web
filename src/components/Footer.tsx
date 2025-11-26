@@ -48,23 +48,28 @@ const Footer = () => {
             <h4 className="text-lg font-bold mb-4 text-accent">Quick Links</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#home" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <a href="/" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#cars" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <a href="/#cars" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Browse Cars
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <a href="/services" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Services
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <a href="/about" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   About Us
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                  Contact
                 </a>
               </li>
             </ul>
@@ -88,12 +93,16 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
                 <span className="text-primary-foreground/80">
-                  Nairobi, Kenya
+                  BBs Mall, Nairobi, Kenya
                 </span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-accent flex-shrink-0" />
-                <span className="text-primary-foreground/80">+254 700 000 000</span>
+              <li className="flex items-start gap-3">
+                <Phone className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
+                <div className="text-primary-foreground/80">
+                  <p>Kenya: 0797771277</p>
+                  <p>Somalia: 0613081722</p>
+                  <p>Admissions: 0799578310</p>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-accent flex-shrink-0" />
