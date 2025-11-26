@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, Gauge, Users, Fuel } from "lucide-react";
+import { Gauge, Users, Fuel } from "lucide-react";
+import { Link } from "react-router-dom";
 import carSUV from "@/assets/car-suv.jpg";
 import carSports from "@/assets/car-sports.jpg";
 import carSedan from "@/assets/car-sedan.jpg";
@@ -9,31 +10,31 @@ import carElectric from "@/assets/car-electric.jpg";
 const cars = [
   {
     id: 1,
-    name: "Luxury SUV Elite",
-    price: "$85,000",
+    name: "Mercedes-Benz GLE",
+    price: "KES 12,500,000",
     image: carSUV,
-    specs: { speed: "220 km/h", seats: "7 Seats", fuel: "Hybrid" },
+    specs: { speed: "210 km/h", seats: "7 Seats", fuel: "Diesel" },
   },
   {
     id: 2,
-    name: "Sports Coupe X",
-    price: "$125,000",
+    name: "BMW M4 Competition",
+    price: "KES 14,200,000",
     image: carSports,
-    specs: { speed: "280 km/h", seats: "2 Seats", fuel: "Petrol" },
+    specs: { speed: "290 km/h", seats: "4 Seats", fuel: "Petrol" },
   },
   {
     id: 3,
-    name: "Premium Sedan",
-    price: "$65,000",
+    name: "Audi Q7 Premium",
+    price: "KES 11,000,000",
     image: carSedan,
-    specs: { speed: "200 km/h", seats: "5 Seats", fuel: "Diesel" },
+    specs: { speed: "240 km/h", seats: "7 Seats", fuel: "Hybrid" },
   },
   {
     id: 4,
-    name: "Electric Vision",
-    price: "$95,000",
+    name: "Tesla Model S",
+    price: "KES 13,000,000",
     image: carElectric,
-    specs: { speed: "210 km/h", seats: "5 Seats", fuel: "Electric" },
+    specs: { speed: "250 km/h", seats: "5 Seats", fuel: "Electric" },
   },
 ];
 
@@ -88,12 +89,13 @@ const FeaturedCars = () => {
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-2xl font-bold text-accent">{car.price}</span>
                 </div>
-                <Button 
-                  className="w-full bg-primary hover:bg-accent hover:text-accent-foreground group/btn"
-                >
-                  <Eye className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
-                  Quick View
-                </Button>
+                <Link to={`/car/${car.id}`} className="w-full">
+                  <Button 
+                    className="w-full bg-primary hover:bg-accent hover:text-accent-foreground"
+                  >
+                    View Details
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

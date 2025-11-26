@@ -9,11 +9,11 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
           <div>
-            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
-              AutoTicket
+            <h3 className="text-2xl font-bold mb-4 text-accent">
+              Doogsan Enterprise
             </h3>
             <p className="text-primary-foreground/80 mb-6">
-              Your trusted partner for premium vehicles and seamless travel experiences.
+              Your trusted partner for premium vehicles and seamless travel experiences in Kenya.
             </p>
             <div className="flex gap-4">
               <a 
@@ -88,16 +88,16 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
                 <span className="text-primary-foreground/80">
-                  123 Business Avenue, Commerce District, City 12345
+                  Nairobi, Kenya
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-accent flex-shrink-0" />
-                <span className="text-primary-foreground/80">+1 (555) 123-4567</span>
+                <span className="text-primary-foreground/80">+254 700 000 000</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-accent flex-shrink-0" />
-                <span className="text-primary-foreground/80">info@autoticket.com</span>
+                <span className="text-primary-foreground/80">info@doogsan.co.ke</span>
               </li>
             </ul>
           </div>
@@ -107,7 +107,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/60 text-sm">
-              © {currentYear} AutoTicket. All rights reserved.
+              © {currentYear} Doogsan Enterprise. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <a href="#" className="text-primary-foreground/60 hover:text-accent transition-colors">
