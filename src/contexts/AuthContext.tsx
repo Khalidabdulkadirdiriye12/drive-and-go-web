@@ -6,7 +6,7 @@ interface User {
   email: string;
   full_name: string;
   phone_number: string;
-  role: string;
+  role: 'admin' | 'staff' | 'client';
   is_active: boolean;
   date_joined: string;
 }
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const userData = await authAPI.getProfile();
-      setUser(userData);
+      setUser(userData as User);
     } catch (error) {
       console.error('Failed to load user:', error);
       setUser(null);

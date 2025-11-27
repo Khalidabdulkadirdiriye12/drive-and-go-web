@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import Index from "./pages/Index";
 import Cars from "./pages/Cars";
 import Tickets from "./pages/Tickets";
@@ -12,6 +13,7 @@ import CarDetail from "./pages/CarDetail";
 import TicketDetail from "./pages/TicketDetail";
 import Checkout from "./pages/Checkout";
 import OrderTracking from "./pages/OrderTracking";
+import AdminDashboard from "./pages/AdminDashboard";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
@@ -36,6 +38,14 @@ const App = () => (
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/car/:id" element={<CarDetail />} />
             <Route path="/ticket/:id" element={<TicketDetail />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
             <Route
               path="/checkout"
               element={
