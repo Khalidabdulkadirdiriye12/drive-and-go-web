@@ -86,7 +86,7 @@ const Services = () => {
 
           {/* Why Choose Us */}
           <div className="bg-gradient-hero text-primary-foreground rounded-2xl p-12 animate-fade-in-up">
-            <h2 className="text-3xl font-bold mb-8 text-center">Why Choose Doogsan Enterprise</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center">Why Choose Azhar Online</h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
                 <Shield className="h-12 w-12 mx-auto mb-4" />

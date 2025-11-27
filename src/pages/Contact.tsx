@@ -55,7 +55,7 @@ const Contact = () => {
                   <Mail className="h-6 w-6 text-tertiary mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-bold text-foreground mb-2">Email</h3>
-                    <p className="text-muted-foreground">info@doogsan.co.ke</p>
+                    <p className="text-muted-foreground">info@azharonline.co.ke</p>
                   </div>
                 </div>
 
