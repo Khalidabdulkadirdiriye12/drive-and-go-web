@@ -71,8 +71,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await authAPI.logout();
+    // Clear user state immediately for instant UI update
     setUser(null);
+    // Then call API to invalidate tokens on server
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      // Even if API fails, tokens are cleared locally
+      console.error('Logout API error:', error);
+    }
   };
 
   const refreshUser = async () => {
