@@ -3,310 +3,352 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, CreditCard, ShieldCheck } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Upload, CheckCircle, Building2 } from "lucide-react";
 
 const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { product, type } = location.state || {};
-  
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
     address: "",
     city: "",
-    cardNumber: "",
-    cardName: "",
-    expiryDate: "",
-    cvv: "",
+    paymentType: "deposit",
+    bankSlip: null as File | null,
   });
+
+  const paymentReference = `AZH${Date.now().toString().slice(-8)}`;
 
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-32 text-center">
-          <h1 className="text-4xl font-bold mb-4">No Product Selected</h1>
-          <p className="text-muted-foreground mb-8">Please select a product to checkout</p>
-          <Link to="/">
-            <Button>Return Home</Button>
-          </Link>
-        </div>
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-3xl font-bold mb-4">No Product Selected</h1>
+            <Link to="/cars">
+              <Button>Browse Cars</Button>
+            </Link>
+          </div>
+        </main>
         <Footer />
       </div>
     );
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData({ ...formData, bankSlip: e.target.files[0] });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.cardNumber) {
+
+    if (!formData.fullName || !formData.email || !formData.phone) {
       toast({
-        title: "Missing Information",
+        title: "Error",
         description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
     }
 
-    // Simulate successful purchase
+    if (!formData.bankSlip) {
+      toast({
+        title: "Error",
+        description: "Please upload your bank payment slip",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
-      title: "Purchase Successful! 🎉",
-      description: `Your ${type === "car" ? "car" : "ticket"} has been successfully purchased. Check your email for confirmation.`,
+      title: "Order Submitted!",
+      description: `Your order has been received. Payment Reference: ${paymentReference}`,
     });
 
-    // Redirect to home after 2 seconds
     setTimeout(() => {
-      navigate("/");
+      navigate("/order-tracking", { state: { orderId: paymentReference } });
     }, 2000);
   };
 
-  const serviceFee = type === "car" ? 50000 : 200;
-  const productPrice = parseInt(product.price.replace(/[^\d]/g, ''));
-  const total = productPrice + serviceFee;
+  const finalPrice =
+    type === "car"
+      ? product.basePrice +
+        product.shippingEstimate +
+        product.dutyEstimate +
+        product.clearingEstimate
+      : product.price;
+
+  const depositAmount = Math.round(finalPrice * 0.3);
+  const paymentAmount = formData.paymentType === "deposit" ? depositAmount : finalPrice;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-32 pb-20">
-        <div className="container mx-auto px-4">
-          {/* Back Button */}
-          <Link to="/" className="inline-flex items-center gap-2 text-accent hover:text-accent/80 mb-8 transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-            Back to Home
+
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <Link to="/cars">
+            <Button variant="ghost" className="mb-6">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
           </Link>
 
-          <h1 className="text-4xl font-bold mb-8">Checkout</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-8">Complete Your Order</h1>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Form */}
+            {/* Order Form */}
             <div className="lg:col-span-2">
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Contact Information */}
-                <Card>
-                  <CardContent className="p-6">
-                    <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-                    <div className="space-y-4">
+                <Card className="p-6">
+                  <h2 className="text-xl font-bold text-foreground mb-6">Contact Information</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="fullName">Full Name *</Label>
+                      <Input
+                        id="fullName"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="fullName">Full Name *</Label>
+                        <Label htmlFor="email">Email *</Label>
                         <Input
-                          id="fullName"
-                          name="fullName"
-                          value={formData.fullName}
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
                           onChange={handleInputChange}
-                          placeholder="John Doe"
                           required
                         />
                       </div>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="email">Email *</Label>
-                          <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="john@example.com"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="phone">Phone Number *</Label>
-                          <Input
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            placeholder="+254 700 000 000"
-                            required
-                          />
-                        </div>
+                      <div>
+                        <Label htmlFor="phone">Phone Number *</Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
 
-                {/* Shipping Address (for cars only) */}
+                {/* Delivery Address */}
                 {type === "car" && (
-                  <Card>
-                    <CardContent className="p-6">
-                      <h2 className="text-2xl font-bold mb-6">Delivery Address</h2>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="address">Street Address</Label>
-                          <Input
-                            id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleInputChange}
-                            placeholder="123 Main Street"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            placeholder="Nairobi"
-                          />
-                        </div>
+                  <Card className="p-6">
+                    <h2 className="text-xl font-bold text-foreground mb-6">Delivery Address</h2>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="address">Street Address</Label>
+                        <Input
+                          id="address"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                        />
                       </div>
-                    </CardContent>
+                      <div>
+                        <Label htmlFor="city">City</Label>
+                        <Input
+                          id="city"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
                   </Card>
                 )}
 
                 {/* Payment Information */}
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-6">
-                      <CreditCard className="h-6 w-6 text-accent" />
-                      <h2 className="text-2xl font-bold">Payment Information</h2>
-                    </div>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="cardNumber">Card Number *</Label>
-                        <Input
-                          id="cardNumber"
-                          name="cardNumber"
-                          value={formData.cardNumber}
-                          onChange={handleInputChange}
-                          placeholder="1234 5678 9012 3456"
-                          maxLength={19}
-                          required
-                        />
+                <Card className="p-6">
+                  <h2 className="text-xl font-bold text-foreground mb-6">Payment Information</h2>
+
+                  {/* Payment Type Selection */}
+                  <div className="mb-6">
+                    <Label className="mb-3 block">Payment Type</Label>
+                    <RadioGroup
+                      value={formData.paymentType}
+                      onValueChange={(value) => setFormData({ ...formData, paymentType: value })}
+                    >
+                      <div className="flex items-center space-x-2 p-4 border border-border rounded-lg">
+                        <RadioGroupItem value="deposit" id="deposit" />
+                        <Label htmlFor="deposit" className="flex-1 cursor-pointer">
+                          <span className="font-semibold">30% Deposit</span>
+                          <span className="text-sm text-muted-foreground block">
+                            Pay KES {depositAmount.toLocaleString()} now, balance on delivery (Recommended)
+                          </span>
+                        </Label>
                       </div>
-                      <div>
-                        <Label htmlFor="cardName">Cardholder Name *</Label>
-                        <Input
-                          id="cardName"
-                          name="cardName"
-                          value={formData.cardName}
-                          onChange={handleInputChange}
-                          placeholder="John Doe"
-                          required
-                        />
+                      <div className="flex items-center space-x-2 p-4 border border-border rounded-lg">
+                        <RadioGroupItem value="full" id="full" />
+                        <Label htmlFor="full" className="flex-1 cursor-pointer">
+                          <span className="font-semibold">Full Payment</span>
+                          <span className="text-sm text-muted-foreground block">
+                            Pay KES {finalPrice.toLocaleString()} now
+                          </span>
+                        </Label>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="expiryDate">Expiry Date *</Label>
-                          <Input
-                            id="expiryDate"
-                            name="expiryDate"
-                            value={formData.expiryDate}
-                            onChange={handleInputChange}
-                            placeholder="MM/YY"
-                            maxLength={5}
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="cvv">CVV *</Label>
-                          <Input
-                            id="cvv"
-                            name="cvv"
-                            type="password"
-                            value={formData.cvv}
-                            onChange={handleInputChange}
-                            placeholder="123"
-                            maxLength={3}
-                            required
-                          />
-                        </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Bank Details */}
+                  <div className="bg-muted/30 p-6 rounded-lg mb-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      <h3 className="font-bold text-foreground">Bank Payment Details</h3>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Bank Name:</span>
+                        <span className="font-semibold">Co-operative Bank of Kenya</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Account Name:</span>
+                        <span className="font-semibold">AZHAR ONLINE PAYMENT LTD</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Account Number:</span>
+                        <span className="font-semibold">01129465321000</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Payment Reference:</span>
+                        <span className="font-semibold text-primary">{paymentReference}</span>
+                      </div>
+                      <Separator className="my-3" />
+                      <div className="flex justify-between text-base">
+                        <span className="font-semibold">Amount to Pay:</span>
+                        <span className="font-bold text-primary">
+                          KES {paymentAmount.toLocaleString()}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-                      <ShieldCheck className="h-4 w-4 text-accent" />
-                      <span>Your payment information is secure and encrypted</span>
+                  </div>
+
+                  {/* Upload Bank Slip */}
+                  <div>
+                    <Label htmlFor="bankSlip" className="mb-2 block">
+                      Upload Bank Payment Slip *
+                    </Label>
+                    <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                      <input
+                        type="file"
+                        id="bankSlip"
+                        accept="image/*,.pdf"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <label htmlFor="bankSlip" className="cursor-pointer">
+                        {formData.bankSlip ? (
+                          <div className="flex items-center justify-center gap-2 text-accent">
+                            <CheckCircle className="h-5 w-5" />
+                            <span className="font-semibold">{formData.bankSlip.name}</span>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground">
+                              Click to upload your bank slip (JPG, PNG, or PDF)
+                            </p>
+                          </>
+                        )}
+                      </label>
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
 
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow"
-                >
-                  Complete Purchase - KES {total.toLocaleString()}
+                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/90 font-semibold text-lg h-14">
+                  Submit Order
                 </Button>
               </form>
             </div>
 
             {/* Order Summary */}
-            <div>
-              <Card className="sticky top-32">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-                  
-                  {product.image && (
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-bold text-lg">{product.name}</h3>
+            <div className="lg:col-span-1">
+              <Card className="p-6 sticky top-24">
+                <h2 className="text-xl font-bold text-foreground mb-6">Order Summary</h2>
+
+                <div className="space-y-4">
+                  <img
+                    src={type === "car" ? product.images[0] : product.image}
+                    alt={product.name}
+                    className="w-full h-40 object-cover rounded-lg"
+                  />
+
+                  <div>
+                    <h3 className="font-bold text-foreground">{product.name}</h3>
+                    {type === "car" && (
                       <p className="text-sm text-muted-foreground">
-                        {type === "car" ? "Vehicle Purchase" : `${product.type} Ticket`}
+                        {product.specs.year} • {product.specs.country}
                       </p>
-                    </div>
-                    
-                    {type === "ticket" && (
-                      <div className="text-sm space-y-1 border-t border-border pt-4">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Route:</span>
-                          <span className="font-medium">{product.route}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Duration:</span>
-                          <span className="font-medium">{product.duration}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Class:</span>
-                          <span className="font-medium">{product.class}</span>
-                        </div>
-                      </div>
                     )}
-                    
-                    <div className="border-t border-border pt-4 space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Price</span>
-                        <span className="font-semibold">KES {productPrice.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Service Fee</span>
-                        <span className="font-semibold">KES {serviceFee.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-lg font-bold border-t border-border pt-2">
-                        <span>Total</span>
-                        <span className="text-accent">KES {total.toLocaleString()}</span>
-                      </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-2">
+                    {type === "car" && (
+                      <>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Base Price:</span>
+                          <span>KES {product.basePrice.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Shipping:</span>
+                          <span>KES {product.shippingEstimate.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Import Duty:</span>
+                          <span>KES {product.dutyEstimate.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Clearing:</span>
+                          <span>KES {product.clearingEstimate.toLocaleString()}</span>
+                        </div>
+                      </>
+                    )}
+                    <Separator />
+                    <div className="flex justify-between font-bold">
+                      <span>Total Amount:</span>
+                      <span>KES {finalPrice.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-accent font-bold text-lg">
+                      <span>Amount to Pay Now:</span>
+                      <span>KES {paymentAmount.toLocaleString()}</span>
                     </div>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             </div>
           </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );
