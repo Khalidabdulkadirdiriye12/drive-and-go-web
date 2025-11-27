@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X, ShoppingCart, LogOut, User } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/azhar-logo.png";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -15,6 +20,24 @@ const Header = () => {
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: 'Logged out',
+        description: 'You have been successfully logged out.',
+      });
+      navigate('/');
+      setMobileMenuOpen(false);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -43,18 +66,37 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
+          {/* Desktop Auth & Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/checkout">
-              <Button variant="outline" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow">
-                Contact Us
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span className="max-w-[120px] truncate">{user?.full_name}</span>
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="font-semibold"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="font-semibold">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-glow">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,11 +122,36 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold w-full">
-                  Contact Us
-                </Button>
-              </Link>
+              
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                    <User className="h-4 w-4" />
+                    <span>{user?.full_name}</span>
+                  </div>
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="w-full font-semibold"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full font-semibold">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold w-full">
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
         )}
