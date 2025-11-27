@@ -21,6 +21,8 @@ const Header = () => {
     { name: "Contact", href: "/contact" },
   ];
 
+  const isAdmin = user?.role === 'admin' || user?.role === 'staff';
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -64,6 +66,14 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+              >
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* Desktop Auth & Actions */}
@@ -122,6 +132,15 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="text-foreground/80 hover:text-accent transition-colors duration-300 font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Admin
+                </Link>
+              )}
               
               {isAuthenticated ? (
                 <>

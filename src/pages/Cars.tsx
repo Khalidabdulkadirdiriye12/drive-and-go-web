@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CarFilters from "@/components/CarFilters";
 import CarSearchBar from "@/components/CarSearchBar";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import carSUV from "@/assets/car-suv.jpg";
-import carSports from "@/assets/car-sports.jpg";
-import carSedan from "@/assets/car-sedan.jpg";
-import carElectric from "@/assets/car-electric.jpg";
 import { Car, Fuel, Gauge, MapPin } from "lucide-react";
+import { carsAPI, Car as CarType } from "@/services/api";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Cars = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [cars, setCars] = useState<CarType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("created_at");
   const [filters, setFilters] = useState({
     country: "all",
     minPrice: 0,
@@ -23,125 +31,40 @@ const Cars = () => {
     transmission: "all",
   });
 
-  const allCars = [
-    {
-      id: 1,
-      name: "Mercedes-Benz GLE",
-      make: "Mercedes-Benz",
-      model: "GLE",
-      price: 8500000,
-      image: carSUV,
-      type: "SUV",
-      fuel: "Diesel",
-      year: "2023",
-      mileage: "15,000 km",
-      transmission: "Automatic",
-      condition: "Used",
-      country: "USA",
-    },
-    {
-      id: 2,
-      name: "BMW M4 Competition",
-      make: "BMW",
-      model: "M4",
-      price: 12000000,
-      image: carSports,
-      type: "Sports",
-      fuel: "Petrol",
-      year: "2024",
-      mileage: "5,000 km",
-      transmission: "Manual",
-      condition: "New",
-      country: "Japan",
-    },
-    {
-      id: 3,
-      name: "Audi Q7 Premium",
-      make: "Audi",
-      model: "Q7",
-      price: 6200000,
-      image: carSedan,
-      type: "Sedan",
-      fuel: "Hybrid",
-      year: "2022",
-      mileage: "30,000 km",
-      transmission: "Automatic",
-      condition: "Used",
-      country: "Thailand",
-    },
-    {
-      id: 4,
-      name: "Tesla Model S",
-      make: "Tesla",
-      model: "Model S",
-      price: 9800000,
-      image: carElectric,
-      type: "Electric",
-      fuel: "Electric",
-      year: "2024",
-      mileage: "2,000 km",
-      transmission: "Automatic",
-      condition: "New",
-      country: "USA",
-    },
-    {
-      id: 5,
-      name: "Toyota Land Cruiser",
-      make: "Toyota",
-      model: "Land Cruiser",
-      price: 7200000,
-      image: carSUV,
-      type: "SUV",
-      fuel: "Diesel",
-      year: "2023",
-      mileage: "12,000 km",
-      transmission: "Automatic",
-      condition: "Used",
-      country: "Japan",
-    },
-    {
-      id: 6,
-      name: "Honda Accord",
-      make: "Honda",
-      model: "Accord",
-      price: 4500000,
-      image: carSedan,
-      type: "Sedan",
-      fuel: "Petrol",
-      year: "2021",
-      mileage: "45,000 km",
-      transmission: "Manual",
-      condition: "Used",
-      country: "China",
-    },
-  ];
+  const fetchCars = async () => {
+    setLoading(true);
+    try {
+      const apiFilters: any = {
+        status: 'available',
+      };
+      
+      if (searchQuery) apiFilters.search = searchQuery;
+      if (filters.country !== "all") apiFilters.country = filters.country;
+      if (filters.make !== "all") apiFilters.make = filters.make;
+      if (filters.year !== "all") apiFilters.year = filters.year;
+      if (filters.condition !== "all") apiFilters.condition = filters.condition;
+      if (sortBy) apiFilters.ordering = sortBy;
 
-  // Filter and search logic
-  const filteredCars = allCars.filter((car) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.make.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.year.includes(searchQuery);
+      const data = await carsAPI.listCars(apiFilters);
+      
+      // Client-side price filtering
+      const filtered = data.filter((car) => {
+        const price = parseFloat(car.price);
+        return price >= filters.minPrice && price <= filters.maxPrice;
+      });
+      
+      setCars(filtered);
+    } catch (error: any) {
+      toast.error('Failed to load cars');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const matchesCountry = filters.country === "all" || car.country === filters.country;
-    const matchesPrice = car.price >= filters.minPrice && car.price <= filters.maxPrice;
-    const matchesMake = filters.make === "all" || car.make === filters.make;
-    const matchesYear = filters.year === "all" || car.year === filters.year;
-    const matchesCondition = filters.condition === "all" || car.condition === filters.condition;
-    const matchesTransmission = filters.transmission === "all" || car.transmission === filters.transmission;
-
-    return (
-      matchesSearch &&
-      matchesCountry &&
-      matchesPrice &&
-      matchesMake &&
-      matchesYear &&
-      matchesCondition &&
-      matchesTransmission
-    );
-  });
+  useEffect(() => {
+    fetchCars();
+  }, [searchQuery, filters, sortBy]);
 
   const handleResetFilters = () => {
     setFilters({
@@ -178,8 +101,25 @@ const Cars = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="mb-8 max-w-2xl mx-auto">
-            <CarSearchBar value={searchQuery} onChange={setSearchQuery} />
+          <div className="mb-8 max-w-3xl mx-auto">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <CarSearchBar value={searchQuery} onChange={setSearchQuery} />
+              </div>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="created_at">Newest First</SelectItem>
+                  <SelectItem value="-created_at">Oldest First</SelectItem>
+                  <SelectItem value="price">Price: Low to High</SelectItem>
+                  <SelectItem value="-price">Price: High to Low</SelectItem>
+                  <SelectItem value="year">Year: Old to New</SelectItem>
+                  <SelectItem value="-year">Year: New to Old</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-4 gap-8">
@@ -192,11 +132,15 @@ const Cars = () => {
             <div className="lg:col-span-3">
               <div className="mb-6 flex items-center justify-between">
                 <p className="text-muted-foreground">
-                  {filteredCars.length} {filteredCars.length === 1 ? "vehicle" : "vehicles"} found
+                  {cars.length} {cars.length === 1 ? "vehicle" : "vehicles"} found
                 </p>
               </div>
 
-              {filteredCars.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-16">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : cars.length === 0 ? (
                 <div className="text-center py-16">
                   <Car className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">No vehicles found</h3>
@@ -207,28 +151,38 @@ const Cars = () => {
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredCars.map((car, index) => (
+                  {cars.map((car, index) => (
                     <div
                       key={car.id}
                       className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-large transition-all duration-300 border border-border animate-fade-in-up"
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       <div className="relative overflow-hidden">
-                        <img
-                          src={car.image}
-                          alt={car.name}
-                          className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
+                        {car.image ? (
+                          <img
+                            src={car.image}
+                            alt={`${car.make} ${car.model}`}
+                            className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-48 bg-muted flex items-center justify-center">
+                            <Car className="h-16 w-16 text-muted-foreground" />
+                          </div>
+                        )}
                         <div className="absolute top-3 right-3 bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-bold shadow-glow">
-                          KES {(car.price / 1000000).toFixed(1)}M
+                          KES {(parseFloat(car.price) / 1000000).toFixed(1)}M
                         </div>
-                        <div className="absolute top-3 left-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
-                          {car.country}
-                        </div>
+                        {car.country && (
+                          <div className="absolute top-3 left-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
+                            {car.country}
+                          </div>
+                        )}
                       </div>
 
                       <div className="p-5">
-                        <h3 className="text-xl font-bold text-foreground mb-3">{car.name}</h3>
+                        <h3 className="text-xl font-bold text-foreground mb-3">
+                          {car.make} {car.model}
+                        </h3>
 
                         <div className="grid grid-cols-2 gap-3 mb-4">
                           <div className="flex items-center gap-2 text-muted-foreground">
@@ -236,16 +190,16 @@ const Cars = () => {
                             <span className="text-sm">{car.year}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Gauge className="h-4 w-4 text-secondary" />
-                            <span className="text-sm">{car.mileage}</span>
+                            <MapPin className="h-4 w-4 text-secondary" />
+                            <span className="text-sm capitalize">{car.car_type}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Fuel className="h-4 w-4 text-accent" />
-                            <span className="text-sm">{car.fuel}</span>
+                            <Gauge className="h-4 w-4 text-accent" />
+                            <span className="text-sm capitalize">{car.condition}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <MapPin className="h-4 w-4 text-primary" />
-                            <span className="text-sm">{car.condition}</span>
+                            <Fuel className="h-4 w-4 text-primary" />
+                            <span className="text-sm">{car.country || 'N/A'}</span>
                           </div>
                         </div>
 

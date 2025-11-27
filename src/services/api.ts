@@ -137,13 +137,85 @@ export const authAPI = {
 };
 
 // Cars API
+export interface Car {
+  id: number;
+  make: string;
+  model: string;
+  year: number;
+  price: string;
+  status: 'available' | 'sold';
+  condition: 'new' | 'used';
+  car_type: 'sedan' | 'suv' | 'truck' | 'coupe' | 'convertible' | 'van' | 'other';
+  country?: string;
+  description?: string;
+  image?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CarFilters {
+  country?: string;
+  make?: string;
+  year?: number;
+  condition?: string;
+  car_type?: string;
+  status?: string;
+  search?: string;
+  ordering?: string;
+}
+
 export const carsAPI = {
-  listCars: async () => {
-    return apiRequest<any[]>('/cars/cars/');
+  listCars: async (filters?: CarFilters) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value.toString());
+      });
+    }
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return apiRequest<Car[]>(`/cars/cars/${query}`);
   },
 
   getCarDetail: async (id: number) => {
-    return apiRequest<any>(`/cars/cars/${id}/`);
+    return apiRequest<Car>(`/cars/cars/${id}/`);
+  },
+
+  createCar: async (data: FormData) => {
+    const accessToken = getAccessToken();
+    const response = await fetch(`${API_BASE_URL}/cars/cars/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: data,
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
+      throw new Error(error.detail || error.message || 'Request failed');
+    }
+    return response.json();
+  },
+
+  updateCar: async (id: number, data: FormData) => {
+    const accessToken = getAccessToken();
+    const response = await fetch(`${API_BASE_URL}/cars/cars/${id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: data,
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
+      throw new Error(error.detail || error.message || 'Request failed');
+    }
+    return response.json();
+  },
+
+  deleteCar: async (id: number) => {
+    return apiRequest(`/cars/cars/${id}/`, {
+      method: 'DELETE',
+    });
   },
 
   createOrder: async (carId: number) => {
