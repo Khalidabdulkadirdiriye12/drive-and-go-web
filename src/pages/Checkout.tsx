@@ -89,14 +89,21 @@ const Checkout = () => {
 
   const finalPrice =
     type === "car"
-      ? product.basePrice +
-        product.shippingEstimate +
-        product.dutyEstimate +
-        product.clearingEstimate
+      ? (product.basePrice ?? 0) +
+        (product.shippingEstimate ?? 0) +
+        (product.dutyEstimate ?? 0) +
+        (product.clearingEstimate ?? 0)
       : product.price;
 
   const depositAmount = Math.round(finalPrice * 0.3);
   const paymentAmount = formData.paymentType === "deposit" ? depositAmount : finalPrice;
+
+  // If product doesn't have cost breakdown, calculate estimates
+  const hasDetailedCosts = product.basePrice !== undefined;
+  const displayBasePrice = hasDetailedCosts ? product.basePrice : Math.round(finalPrice * 0.65);
+  const displayShipping = hasDetailedCosts ? product.shippingEstimate : Math.round(finalPrice * 0.15);
+  const displayDuty = hasDetailedCosts ? product.dutyEstimate : Math.round(finalPrice * 0.15);
+  const displayClearing = hasDetailedCosts ? product.clearingEstimate : Math.round(finalPrice * 0.05);
 
   return (
     <div className="min-h-screen bg-background">
@@ -316,19 +323,19 @@ const Checkout = () => {
                       <>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Base Price:</span>
-                          <span>KES {product.basePrice.toLocaleString()}</span>
+                          <span>KES {displayBasePrice.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Shipping:</span>
-                          <span>KES {product.shippingEstimate.toLocaleString()}</span>
+                          <span>KES {displayShipping.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Import Duty:</span>
-                          <span>KES {product.dutyEstimate.toLocaleString()}</span>
+                          <span>KES {displayDuty.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Clearing:</span>
-                          <span>KES {product.clearingEstimate.toLocaleString()}</span>
+                          <span>KES {displayClearing.toLocaleString()}</span>
                         </div>
                       </>
                     )}
