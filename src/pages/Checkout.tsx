@@ -295,7 +295,7 @@ const Checkout = () => {
 
                 <div className="space-y-4">
                   <img
-                    src={type === "car" ? product.images[0] : product.image}
+                    src={type === "car" ? (product.images?.[0] || product.image) : product.image}
                     alt={product.name}
                     className="w-full h-40 object-cover rounded-lg"
                   />
