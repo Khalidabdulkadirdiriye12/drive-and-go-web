@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { carsAPI, Car } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,13 +28,62 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from '@/components/ui/sidebar';
 import { Card } from '@/components/ui/card';
-import { carsAPI, Car } from '@/services/api';
-import { Plus, Pencil, Trash2, Car as CarIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Car as CarIcon, Users } from 'lucide-react';
+import { NavLink } from '@/components/NavLink';
 import { toast } from 'sonner';
 
-const AdminDashboard = () => {
-  const { user } = useAuth();
+const AdminSidebar = () => {
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
+
+  const navItems = [
+    { title: 'Cars', path: '#cars', icon: CarIcon },
+    { title: 'Users', path: '#users', icon: Users },
+  ];
+
+  return (
+    <Sidebar className={isCollapsed ? 'w-14' : 'w-60'} collapsible="icon">
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a
+                      href={item.path}
+                      className="flex items-center hover:bg-muted/50 cursor-pointer"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {!isCollapsed && <span className="ml-2">{item.title}</span>}
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+};
+
+const CarsManagement = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -150,144 +198,137 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Welcome back, {user?.full_name}</p>
-              </div>
-              <Button
-                onClick={() => handleOpenDialog()}
-                className="bg-accent hover:bg-accent/90 text-accent-foreground"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add New Car
-              </Button>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <CarIcon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Cars</p>
-                    <p className="text-2xl font-bold text-foreground">{cars.length}</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-accent/10 rounded-lg">
-                    <CarIcon className="h-6 w-6 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Available</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {cars.filter((c) => c.status === 'available').length}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-secondary/10 rounded-lg">
-                    <CarIcon className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Sold</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {cars.filter((c) => c.status === 'sold').length}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
+    <section id="cars" className="mb-12">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Car Inventory</h2>
+            <p className="text-muted-foreground">Manage your car listings</p>
           </div>
+          <Button
+            onClick={() => handleOpenDialog()}
+            className="bg-accent hover:bg-accent/90 text-accent-foreground"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Car
+          </Button>
+        </div>
 
-          <Card>
-            <div className="p-6">
-              <h2 className="text-xl font-bold text-foreground mb-4">Car Inventory</h2>
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                </div>
-              ) : cars.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No cars found. Add your first car!</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Make</TableHead>
-                        <TableHead>Model</TableHead>
-                        <TableHead>Year</TableHead>
-                        <TableHead>Price (KES)</TableHead>
-                        <TableHead>Condition</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Country</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {cars.map((car) => (
-                        <TableRow key={car.id}>
-                          <TableCell className="font-medium">{car.make}</TableCell>
-                          <TableCell>{car.model}</TableCell>
-                          <TableCell>{car.year}</TableCell>
-                          <TableCell>{parseFloat(car.price).toLocaleString()}</TableCell>
-                          <TableCell className="capitalize">{car.condition}</TableCell>
-                          <TableCell className="capitalize">{car.car_type}</TableCell>
-                          <TableCell>{car.country || '-'}</TableCell>
-                          <TableCell>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                car.status === 'available'
-                                  ? 'bg-accent/10 text-accent'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {car.status}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleOpenDialog(car)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDelete(car.id)}
-                                className="text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-primary/10 rounded-lg">
+                <CarIcon className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Cars</p>
+                <p className="text-2xl font-bold text-foreground">{cars.length}</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-accent/10 rounded-lg">
+                <CarIcon className="h-6 w-6 text-accent" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Available</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {cars.filter((c) => c.status === 'available').length}
+                </p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-secondary/10 rounded-lg">
+                <CarIcon className="h-6 w-6 text-secondary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Sold</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {cars.filter((c) => c.status === 'sold').length}
+                </p>
+              </div>
             </div>
           </Card>
         </div>
-      </main>
+      </div>
+
+      <Card>
+        <div className="p-6">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </div>
+          ) : cars.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No cars found. Add your first car!</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Make</TableHead>
+                    <TableHead>Model</TableHead>
+                    <TableHead>Year</TableHead>
+                    <TableHead>Price (KES)</TableHead>
+                    <TableHead>Condition</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {cars.map((car) => (
+                    <TableRow key={car.id}>
+                      <TableCell className="font-medium">{car.make}</TableCell>
+                      <TableCell>{car.model}</TableCell>
+                      <TableCell>{car.year}</TableCell>
+                      <TableCell>{parseFloat(car.price).toLocaleString()}</TableCell>
+                      <TableCell className="capitalize">{car.condition}</TableCell>
+                      <TableCell className="capitalize">{car.car_type}</TableCell>
+                      <TableCell>{car.country || '-'}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            car.status === 'available'
+                              ? 'bg-accent/10 text-accent'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {car.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenDialog(car)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(car.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -449,9 +490,53 @@ const AdminDashboard = () => {
           </form>
         </DialogContent>
       </Dialog>
+    </section>
+  );
+};
 
-      <Footer />
-    </div>
+const UsersManagement = () => {
+  return (
+    <section id="users" className="mb-12">
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold text-foreground mb-2">Users Management</h2>
+        <p className="text-muted-foreground">Manage user accounts and permissions</p>
+      </div>
+      <Card className="p-8">
+        <div className="text-center">
+          <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">User management coming soon...</p>
+        </div>
+      </Card>
+    </section>
+  );
+};
+
+const AdminDashboard = () => {
+  const { user } = useAuth();
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AdminSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          <header className="h-16 border-b border-border flex items-center px-6 bg-background sticky top-0 z-10">
+            <SidebarTrigger className="mr-4" />
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold text-foreground">Admin Dashboard</h1>
+              <p className="text-sm text-muted-foreground">
+                Welcome, {user?.full_name}
+              </p>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-auto p-6">
+            <CarsManagement />
+            <UsersManagement />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
