@@ -237,7 +237,7 @@ const Checkout = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Account Name:</span>
-                        <span className="font-semibold">AZHAR ONLINE PAYMENT LTD</span>
+                        <span className="font-semibold">Azhar Online</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Account Number:</span>

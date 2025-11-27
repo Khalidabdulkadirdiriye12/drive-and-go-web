@@ -10,10 +10,10 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <h3 className="text-2xl font-bold mb-4 text-accent">
-              Doogsan Enterprise
+              Azhar Online
             </h3>
             <p className="text-primary-foreground/80 mb-6">
-              Your trusted partner for premium vehicles and seamless travel experiences in Kenya.
+              Your trusted partner for premium vehicles and seamless international import services.
             </p>
             <div className="flex gap-4">
               <a 
@@ -79,10 +79,10 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-bold mb-4 text-accent">Services</h4>
             <ul className="space-y-3">
-              <li className="text-primary-foreground/80">Car Sales</li>
-              <li className="text-primary-foreground/80">Flight Tickets</li>
-              <li className="text-primary-foreground/80">Train Reservations</li>
-              <li className="text-primary-foreground/80">Travel Packages</li>
+              <li className="text-primary-foreground/80">Car Import Services</li>
+              <li className="text-primary-foreground/80">Shipping & Clearing</li>
+              <li className="text-primary-foreground/80">Vehicle Inspection</li>
+              <li className="text-primary-foreground/80">Payment Processing</li>
             </ul>
           </div>
 
@@ -106,7 +106,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-accent flex-shrink-0" />
-                <span className="text-primary-foreground/80">info@doogsan.co.ke</span>
+                <span className="text-primary-foreground/80">info@azharonline.co.ke</span>
               </li>
             </ul>
           </div>
@@ -116,7 +116,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/60 text-sm">
-              © {currentYear} Doogsan Enterprise. All rights reserved.
+              © {currentYear} Azhar Online. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <a href="#" className="text-primary-foreground/60 hover:text-accent transition-colors">

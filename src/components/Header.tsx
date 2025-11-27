@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/doogsan-logo.jpg";
+import logo from "@/assets/azhar-logo.png";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,10 +22,10 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <img src={logo} alt="Doogsan Enterprise" className="h-12 w-12 object-contain rounded-lg" />
+            <img src={logo} alt="Azhar Online" className="h-14 w-14 object-contain" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
-                Doogsan Enterprise
+                Azhar Online
               </h1>
             </div>
           </Link>

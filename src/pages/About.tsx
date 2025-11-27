@@ -12,10 +12,10 @@ const About = () => {
           {/* Hero Section */}
           <div className="text-center mb-16 animate-fade-in-up">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              About Doogsan Enterprise
+              About Azhar Online
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Your trusted partner for premium vehicles and seamless travel experiences in Kenya and beyond.
+              Your trusted partner for premium car import services from USA, Japan, Thailand, and China.
             </p>
           </div>
 
@@ -24,16 +24,16 @@ const About = () => {
             <div className="animate-fade-in-up">
               <h2 className="text-3xl font-bold text-foreground mb-6">Our Story</h2>
               <p className="text-muted-foreground mb-4">
-                Founded with a vision to revolutionize the automotive and travel industry in East Africa, 
-                Doogsan Enterprise has grown to become a trusted name in both car sales and travel services.
+                Founded with a vision to revolutionize the car import industry in East Africa, 
+                Azhar Online has grown to become a trusted name in international vehicle procurement and import services.
               </p>
               <p className="text-muted-foreground mb-4">
-                Located in the heart of Nairobi at BBs Mall, we serve customers across Kenya and Somalia, 
-                providing exceptional service and quality products that exceed expectations.
+                Located in the heart of Nairobi at BBs Mall, we serve customers across Kenya, 
+                providing exceptional service and seamless import experiences from USA, Japan, Thailand, and China.
               </p>
               <p className="text-muted-foreground">
-                Our commitment to excellence and customer satisfaction has made us the preferred choice 
-                for thousands of satisfied customers.
+                Our commitment to transparency, quality, and customer satisfaction has made us the preferred choice 
+                for car imports in Kenya.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-6">

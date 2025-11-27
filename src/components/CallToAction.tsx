@@ -57,7 +57,7 @@ const CallToAction = () => {
                 <div className="hidden sm:block w-px h-6 bg-primary-foreground/20" />
                 <div className="flex items-center gap-2">
                   <Mail className="h-5 w-5 text-accent" />
-                  <span className="font-medium">info@doogsan.co.ke</span>
+                  <span className="font-medium">info@azharonline.co.ke</span>
                 </div>
               </div>
             </div>
